@@ -6,6 +6,7 @@ direc = 'RawData/'
 
 #number of pages to examine
 NUM_PAGES = 200
+POP_THRESHOLD = 80
 
 fp = open('Dictionaries/master.json', 'r')
 data = json.loads(fp.read())
@@ -104,10 +105,10 @@ def addToTest(title,domain,username,time,points):
     #For naive bayes, the classes, 'y', and the features, 'x', are stored in different
     #files
     testExamples.writerow(dictionaryVector+urlVector+timeVector)
-    testClasses.writerow([int(points > 100)])
+    testClasses.writerow([int(points > POP_THRESHOLD)])
     
     # For svm, the classes, 'y', make up the first column
-    svmTest.writerow([int(points > 100)]+dictionaryVector+urlVector+timeVector)
+    svmTest.writerow([int(points > POP_THRESHOLD)]+dictionaryVector+urlVector+timeVector)
     
 def addToTrain(title,domain,username,time,points):
     words = returnWords(title)
@@ -119,10 +120,10 @@ def addToTrain(title,domain,username,time,points):
     #For naive bayes, the classes, 'y', and the features, 'x', are stored in different
     #files
     trainExamples.writerow(dictionaryVector+urlVector+timeVector)
-    trainClasses.writerow([int(points > 100)])
+    trainClasses.writerow([int(points > POP_THRESHOLD)])
     
     # For svm, the classes, 'y', make up the first column
-    svmTrain.writerow([int(points > 100)]+dictionaryVector+urlVector+timeVector)
+    svmTrain.writerow([int(points > POP_THRESHOLD)]+dictionaryVector+urlVector+timeVector)
     
 
 # The time that the crawler scraped the site is provided as well as the 
@@ -191,7 +192,7 @@ for dirname, dirnames, filenames in os.walk(direc):
                 time = getTime(post['ago'],referenceTime)
                 points = post['points']
 
-                if(points > 100 or points < 50):      
+                if(points > POP_THRESHOLD or points < 50):      
                     num = random.randint(1,4)
                 #train on 75% of the data, test on 25%
                     if num == 4:
