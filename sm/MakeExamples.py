@@ -5,7 +5,7 @@ import csv,random
 direc = 'RawData/'
 
 #number of pages to examine
-NUM_PAGES = 10
+NUM_PAGES = 200
 
 fp = open('Dictionaries/master.json', 'r')
 data = json.loads(fp.read())
@@ -159,7 +159,9 @@ def getTime(ago,referenceTime):
     return hourCreated,minuteCreated
 
 test_count = 0
-train_count = 0 
+train_count = 0
+seen = dict()
+ 
 for dirname, dirnames, filenames in os.walk(direc):
     print len(filenames)
     for filename in filenames:
@@ -178,10 +180,14 @@ for dirname, dirnames, filenames in os.walk(direc):
             referenceTime  = page['created_at']
             posts = page['posts']
             for post in posts:
+                username = post['submitter'].lower()
+                uid = username + str(post['id'])
+                if uid in seen:
+                    continue
+                seen[uid] = 1
                 url = post['url'].encode('ascii','ignore')
                 domain = tldextract.extract(url)[1].lower()
                 title = post['title'].encode('ascii','ignore')
-                username = post['submitter'].lower()
                 time = getTime(post['ago'],referenceTime)
                 points = post['points']
 

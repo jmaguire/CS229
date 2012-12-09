@@ -1,7 +1,7 @@
 import os,json
 import tldextract
 
-NUM_PAGES = 10
+NUM_PAGES = 200
 
 directory = 'RawData/'
 
@@ -79,7 +79,8 @@ def trimurls():
             index = index + 1
     urls['unknowncategory'] = index
         
-        
+seen = dict()
+
 for dirname, dirnames, filenames in os.walk(directory):
     for filename in filenames:
         path = os.path.join(dirname,filename)
@@ -97,6 +98,11 @@ for dirname, dirnames, filenames in os.walk(directory):
          
             posts = page['posts']
             for post in posts:
+                username = post['submitter'].lower()
+                uid = username + str(post['id'])
+                if uid in seen:
+                    continue
+                seen[uid] = 1
                 url = post['url'].encode('ascii','ignore')
                 domain = tldextract.extract(url)[1].lower()
                 title = post['title'].encode('ascii','ignore')
